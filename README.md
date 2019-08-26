@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 ## 此项目除了正常的bug修复，不再进行功能更新
 如果对状态管理感兴趣，可以看下 [Tms](https://github.com/FollowmeTech/tms)，文档更齐全
@@ -117,3 +118,6 @@ http://localhost:3000/app/
 ## 开发教程
 [1.开发环境搭建](https://github.com/lzxb/vue2-demo/blob/master/docs/1.md)  
 [2.实现登录退出](https://github.com/lzxb/vue2-demo/blob/master/docs/2.md)
+=======
+devcloud-vue
+>>>>>>> dd51dfdd598d0f9566b6aac9dd4aba30924dd5b3

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "presets": [
         "es2015",
         "stage-0"
@@ -8,3 +9,16 @@
         "transform-vue-jsx"
     ]
 } 
+=======
+  "presets": [
+    ["env", {
+      "modules": false,
+      "targets": {
+        "browsers": ["> 1%", "last 2 versions", "not ie <= 8"]
+      }
+    }],
+    "stage-2"
+  ],
+  "plugins": ["transform-vue-jsx", "transform-runtime"]
+}
+>>>>>>> dd51dfdd598d0f9566b6aac9dd4aba30924dd5b3
