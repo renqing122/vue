@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <router-link :to="{name: 'Login'}">图灵聊天机器人</router-link>
+    <router-link :to="{name: 'Test'}">图灵聊天机器人</router-link>
     <h2>Essential Links</h2>
     <ul>
       <li>

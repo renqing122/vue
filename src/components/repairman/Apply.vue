@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header>出租申请表</el-header>
+    <el-header>维修师傅资格申请表</el-header>
     <el-main>
       <el-form
         ref="form"
@@ -8,29 +8,32 @@
         label-width=50%
       >
         <el-upload
+          class="avatar-uploader"
           action="https://jsonplaceholder.typicode.com/posts/"
-          list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove"
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
         >
-          <i class="el-icon-plus"></i>
-        </el-upload>
-        <el-dialog :visible.sync="dialogVisible">
           <img
-            width="100%"
-            :src="dialogImageUrl"
-            alt=""
+            v-if="imageUrl"
+            :src="imageUrl"
+            class="avatar"
           >
-        </el-dialog>
-        <el-form-item label="用户名">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
+          <i
+            v-else
+            class="el-icon-plus avatar-uploader-icon"
+          ></i>
+        </el-upload>
 
-          <el-form-item label="邮箱">
+        <el-form-item label="邮箱">
           <el-input
             type="email"
             v-model="form.email"
           ></el-input>
+        </el-form-item>
+
+        <el-form-item label="名字">
+          <el-input v-model="form.name"></el-input>
         </el-form-item>
 
         <el-form-item label="手机号">
@@ -60,8 +63,8 @@
           </el-select>
         </el-form-item>
 
-<el-form-item label="房间价格">
-          <el-input 
+        <el-form-item label="房间价格">
+          <el-input
             type="price"
             v-model="form.price"
           ></el-input>
@@ -104,7 +107,7 @@
   line-height: 60px;
   font-size: 26px;
   font-weight: 500;
-  font-family:fantasy
+  font-family: fantasy;
 }
 
 .el-aside {
@@ -136,6 +139,29 @@ body > .el-container {
 .el-form-item {
   width: 65%;
 }
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 </style>
 
 <script>
@@ -146,7 +172,7 @@ export default {
         dialogImageUrl: '',
         dialogVisible: false,
         name: '',
-        email:'',
+        email: '',
         phone: '',
         region: '',
         price: '',
