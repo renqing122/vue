@@ -1,15 +1,4 @@
 {
-<<<<<<< HEAD
-    "presets": [
-        "es2015",
-        "stage-0"
-    ],
-    "plugins": [
-        "transform-object-assign",
-        "transform-vue-jsx"
-    ]
-} 
-=======
   "presets": [
     ["env", {
       "modules": false,
@@ -21,4 +10,3 @@
   ],
   "plugins": ["transform-vue-jsx", "transform-runtime"]
 }
->>>>>>> dd51dfdd598d0f9566b6aac9dd4aba30924dd5b3
