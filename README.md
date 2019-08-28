@@ -1,1 +1,1 @@
-devcloud-vue
+vue-test
