@@ -36,7 +36,6 @@
         <el-button
           slot="append"
           icon="el-icon-search"
-          @click="search"
         ></el-button>
       </el-input>
     </el-header1>
@@ -47,74 +46,70 @@
       >
         <el-table-column
           fixed
-          prop="orderId"
+          prop="orderid"
           label="订单ID"
           width="150"
         >
         </el-table-column>
         <el-table-column
-          prop="tenantId"
-          label="用户ID"
+          prop="name"
+          label="用户名"
           width="100"
         >
         </el-table-column>
         <el-table-column
-          prop="roomId"
-          label="房间ID"
+          prop="roomnumber"
+          label="房间号"
           width="100"
         >
         </el-table-column>
         <el-table-column
-          prop="rentType"
+          prop="way"
           label="租赁方式"
           width="100"
         >
         </el-table-column>
         <el-table-column
-          prop="rentTime"
+          prop="totalday"
           label="租赁天数"
           width="100"
         >
         </el-table-column>
         <el-table-column
-          prop="startDate"
+          prop="stime"
           label="开始时间"
-          width="200"
+          width="150"
         >
         </el-table-column>
         <el-table-column
-          prop="endDate"
+          prop="etime"
           label="结束时间"
-          width="200"
+          width="150"
         >
         </el-table-column>
         <el-table-column
-          prop="rentMoney"
+          prop="totalmoney"
           label="总租金"
           width="100"
         >
         </el-table-column>
         <el-table-column
-          prop="orderStatus"
+          prop="orderstate"
           label="订单状态"
           width="100"
         >
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <span>
-              <el-button
-                size="small"
-                @click="handleEdit(scope.$index, scope.row)"
-              >修改订单</el-button>
-            </span>
-            <span>
-              <el-button
-                size="small"
-                @click="open"
-              >生成合同
-              </el-button>
-            </span>
+            <span><el-button
+              size="small"
+              @click="handleEdit(scope.$index, scope.row)"
+            >修改订单</el-button></span>
+<span>            <el-button
+              size="small"
+              @click="open"
+            >生成合同
+            </el-button></span>
           </template>
         </el-table-column>
       </el-table>
@@ -217,33 +212,60 @@ export default {
   data () {
     return {
       loading: true,
-      tableData: [],
-      // tableData: [{
-      //   orderid: 111,
-      //   name: '王小虎',
-      //   roomnumber: '787',
-      //   way: '长租',
-      //   totalday: '67天',
-      //   stime: '2019-05-04',
-      //   etime: '2019-07-18',
-      //   totalmoney: '6700.00',
-      //   orderstate: '审核中'
-      // }],
+      tableData: [{
+        orderid: 111,
+        name: '王小虎',
+        roomnumber: '787',
+        way: '长租',
+        totalday: '67天',
+        stime: '2019-05-04',
+        etime: '2019-07-18',
+        totalmoney: '6700.00',
+        orderstate: '审核中'
+      }, {
+        orderid: 323,
+        name: '李小萌',
+        roomnumber: '177',
+        way: '长租',
+        totalday: '47天',
+        stime: '2019-05-04',
+        etime: '2019-06-18',
+        totalmoney: '4400.40',
+        orderstate: '审核中'
+      }, {
+        orderid: 431,
+        name: '郝文婷',
+        roomnumber: '827',
+        way: '短租',
+        totalday: '7天',
+        stime: '2019-07-04',
+        etime: '2019-07-18',
+        totalmoney: '700.00',
+        orderstate: '审核通过'
+      }, {
+        orderid: 111,
+        name: '王小虎',
+        roomnumber: '787',
+        way: '长租',
+        totalday: '67天',
+        stime: '2019-05-04',
+        etime: '2019-07-18',
+        totalmoney: '6700.00',
+        orderstate: '审核中'
+      }],
+
       dialogFormVisible: false,
       formLabelWidth: '80px',
       form: {},
       value6: '',
       currentPage3: 1,
       currentIndex: '',
-      select: '1',
-      input: ''
     }
   },
   created () {
     setTimeout(() => {
       this.loading = false
     }, 1500)
-    this.apiGet();
   },
   methods: {
     showTime () {
@@ -286,31 +308,17 @@ export default {
       console.log(`当前页: ${val}`)
     },
     open () {
-      this.$alert('这是一段内容', '用户长租合同', {
-        confirmButtonText: '确定',
-        callback: action => {
-          this.$message({
-            type: 'info',
-            message: `action: ${action}`
-          });
-        }
-      })
-    },
-    apiGet () {
-      this.$http
-        .get('/api/v1/rentOrder/queryAll').then(result => {
-          console.log('success')
-          this.tableData = result.data
-        })
-    },
-    search () {
-      if (select == '1'){
-        //按照房间id查询
-      }else{
-        //按照用户id查询
+    this.$alert('这是一段内容', '用户长租合同', {
+      confirmButtonText: '确定',
+      callback: action => {
+        this.$message({
+          type: 'info',
+          message: `action: ${action}`
+        });
       }
-    }
+    })
   }
-
+  }
+  
 }
 </script>

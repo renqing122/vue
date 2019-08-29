@@ -1,76 +1,118 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Main from '@/components/main/Main'
+import HelloWorld from '@/components/HelloWorld'
 import Test from '@/components/Test'
-import Login from '@/components/main/Login'
 import Register from '@/components/main/Register'
-import Apply from '@/components/service/Apply'
-import ManageOrder from '@/components/service/ManageOrder'
+import Login from '@/components/main/Login'
+import Main from '@/components/main/Main'
 import Add from '@/components/service/Add'
+import ManageOrder from '@/components/service/ManageOrder'
 import Order from '@/components/service/Order'
-import Rlogin from '@/components/root/Rlogin'
-// import Find from '@/components/rent/Find'
+import Apply from '@/components/repairman/Apply'
+import Find from '@/components/rent/Find'
+import Smain from '@/components/service/Smain'
+import AddRepairman from '@/components/service/AddRepairman'
+import ManageRoom from '@/components/service/ManageRoom'
 import CheckOrder from '@/components/service/CheckOrder'
+import Rlogin from '@/components/root/Rlogin'
+import Rmain from '@/components/root/Rmain'
+import AddService from '@/components/root/AddService'
 
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  mode : 'history',
   routes: [
-    {//主页
+    {
       path: '/',
-      name: 'Main',
-      component: Main
+      name: 'HelloWorld',
+      component: HelloWorld
     },
     {
       path: '/test',
       name: 'Test',
       component: Test
     },
-    {//注册
+    {
+      path: '/register',
+      name: 'Register',
+      component: Register
+    },
+    {
+      path: '/main',
+      name: 'Main',
+      component: Main
+    },
+    {
       path: '/login',
       name: 'Login',
       component: Login
     },
-    {//登录
-      path: '/register',
-      name: 'Register',
-      component :Register
-    },
-    {//添加师傅
-      path: '/apply',
-      name: 'Apply',
-      component: Apply
-    },
-    {//导入房间信息
+    {
       path: '/add',
       name: 'Add',
       component: Add
     },
     {
-      path: '/order',
-      name: 'Order',
-      component: Order
-    },
-    {//管理员登录
-      path: '/rlogin',
-      name: 'Rlogin',
-      component: Rlogin
-    },
-    {//客服管理订单
       path: '/manageorder',
       name: 'ManageOrder',
       component: ManageOrder
     },
-    // {//租客查询可租房间
-    //   path: '/find',
-    //   name: 'Find',
-    //   component: Find
-    // },
-    {//客服审核订单
-      path:'/checkorder',
-      name: 'CheckOrder',
-      component: CheckOrder
-    }
+    { 
+      path: "/order", 
+      name:'Order',
+      component: Order 
+    },
+    { 
+      path: "/apply", 
+      name:'Apply',
+      component: Apply 
+    },
+    { 
+      path: "/find", 
+      name:'Find',
+      component: Find 
+    },
+    { 
+      path: "/smain", 
+      name:'Smain',
+      component: Smain, 
+      children:[
+        
+
+      ]
+    },
+    { 
+      path: "/manageroom", 
+      name:'ManageRoom',
+      component: ManageRoom 
+    },
+    { 
+      path: "/rlogin", 
+      name:'Rlogin',
+      component: Rlogin 
+    },
+    { 
+      path: "/rmain", 
+      name:'Rmain',
+      component: Rmain 
+    },
+    { 
+      path: "/addrepairman", 
+      name:'AddRepairman',
+      component: AddRepairman 
+    },
+   
+    { 
+      path: "/checkorder", 
+      name:'CheckOrder',
+      component: CheckOrder 
+    },
+    { 
+      path: "/addservice", 
+      name:'AddService',
+      component: AddService 
+    },
+    
   ]
 })
