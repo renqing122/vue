@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header>青年小屋————专属于你的房屋租赁平台</el-header>
-    <el-container >
+    <el-container>
       <el-form
         :model="ruleForm"
         status-icon
@@ -9,7 +9,6 @@
         ref="ruleForm"
         label-width="500px"
         class="demo-ruleForm"
-        
       >
         <el-form-item
           prop="email"
@@ -25,7 +24,6 @@
         <el-form-item
           label="密码"
           prop="pass"
-          :rules="{ required: true, message:'请输入密码', trigger:'blur' }"
         >
           <el-input
             type="password"
@@ -36,7 +34,6 @@
         <el-form-item
           label="确认密码"
           prop="checkPass"
-          :rules="{ required: true, message:'请输入密码', trigger:'blur' }"
         >
           <el-input
             type="password"
@@ -52,23 +49,26 @@
         <el-form-item
           label="年龄"
           prop="age"
-          :rules="{ required: true, message:'请输入年龄', trigger:'blur' }"
         >
           <el-input v-model.number="ruleForm.age"></el-input>
         </el-form-item>
 
-        <el-form-item  label="性别">
-        <el-radio
-          v-model="ruleForm.radio"
-          label="1"
-        >男</el-radio>
-        <el-radio
-          v-model="ruleForm.radio"
-          label="2"
-        >女</el-radio>
+        <el-form-item label="性别">
+          <el-radio
+            v-model="ruleForm.radio"
+            label="男"
+          >男</el-radio>
+          <el-radio
+            v-model="ruleForm.radio"
+            label="女"
+          >女</el-radio>
         </el-form-item>
 
-        <el-form-item label="手机号">
+        <el-form-item
+          label="手机号"
+          prop="phone"
+          :rules="{min:11,max:11, message:'请输入正确的手机号',trigger:'blur'}"
+        >
           <el-input v-model="ruleForm.phone"></el-input>
         </el-form-item>
         <el-form-item>
@@ -87,13 +87,12 @@
 .el-header,
 .el-footer {
   background-image: url("../../assets/logo.png");
-  color: #FBAF0D;
+  color: #fbaf0d;
   text-align: center;
-  line-height:70px;
-  
+  line-height: 70px;
 }
-.el-form{
-   text-align: center;
+.el-form {
+  text-align: center;
 }
 
 body > .el-container {
@@ -148,25 +147,29 @@ export default {
         callback();
       }
     };
-    return {      
+    return {
       ruleForm: {
         name: '',
         pass: '',
         checkPass: '',
         email: '',
         age: '',
-        radio: '1',
+        radio: '男',
         phone: ''
       },
       rules: {
         pass: [
-          { validator: validatePass, trigger: 'blur' }
+          { validator: validatePass, trigger: 'blur' },
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, message: '密码不能少于六位数', trigger: 'blur' }
         ],
         checkPass: [
-          { validator: validatePass2, trigger: 'blur' }
+          { validator: validatePass2, trigger: 'blur' },
+          { required: true, message: '请再次输入密码', trigger: 'blur' }
         ],
         age: [
-          { validator: checkAge, trigger: 'blur' }
+          { validator: checkAge, trigger: 'blur' },
+          { required: true, message: '请输入年龄', trigger: 'blur' }
         ]
       },
 
@@ -176,15 +179,32 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          this.apiPost();
         } else {
-          console.log('error submit!!');
-          return false;
+          this.$message.error('提交失败，请检查您的信息！');
+          return
         }
       });
     },
     resetForm (formName) {
       this.$refs[formName].resetFields();
+    },
+    apiPost () {
+      this.$http
+        .post('/api/v1/tenant/insert', {"email": this.ruleForm.email, "password": this.ruleForm.pass,
+          "username": this.ruleForm.name, "age": this.ruleForm.age,
+          "sex": this.ruleForm.sex, "telephone": this.ruleForm.phone
+        }).then(res => {
+          if (res.data == "0") {
+            this.$message({
+              message:'注册成功，请进入您的邮箱点击激活！',
+              type:'success'
+              });
+          } else {
+            this.$message.error('注册失败，该邮箱已被注册！');
+            return
+          }
+        })
     }
   }
 }

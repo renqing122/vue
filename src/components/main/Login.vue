@@ -13,18 +13,19 @@
           <el-form-item
             prop="email"
             label="邮箱"
+            hide-required-asterisk = true
             :rules="[
             { required: true, message: '请输入邮箱地址', trigger: 'blur' },
             { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
             ]"
-            hide-required-asterisk: false
           >
             <el-input v-model="dynamicValidateForm.email"></el-input>
           </el-form-item>
           <el-form-item
             label="密码"
             prop="pass"
-            :rules="{ required: true, message:'请输入密码', trigger:'blur' }"
+            :rules="[{ required: true, message:'请输入密码', trigger:'blur' },
+            { min: 6, message:'密码不能少于六位数', trigger:'blur' }]"
           >
             <el-input
               type="password"
@@ -60,23 +61,25 @@ export default {
         if (valid) {
           this.apiPost();
         } else {
-          console.log('提交失败!');
           return false;
         }
       });
     },
     apiPost () {
       this.$http
-      .post('/tenant/login', {"email": this.email,
-      "password": this.pass})
+        .post('/api/v1/tenant/login', {"email": this.dynamicValidateForm.email,
+          "password": this.dynamicValidateForm.pass})
         .then(res => {
           this.apiPostResult = res.data
-          if (this.apiPostResult === "1") {
-            console.log('登录成功！')
-          }else if(this.apiPostResult === "0"){
-            console.log('您的账号或密码错误！')
-          }else{
-            console.log('该邮箱未注册！')
+          if (this.apiPostResult == "0") {
+            this.$message({
+              message: '登录成功!',
+              type: 'success'
+            });
+          } else if (this.apiPostResult == "1") {
+            this.$message.error('您的账号或密码错误！');
+          } else {
+            this.$message.error('该邮箱未注册！');
           }
         })
     }

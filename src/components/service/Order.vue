@@ -8,7 +8,6 @@
           <el-select v-model="select" placeholder="请选择" style="width: 90px">
             <el-option label="房间ID" value="1"></el-option>
             <el-option label="订单ID" value="2"></el-option>
-            <el-option label="用户名" value="3"></el-option>
           </el-select>
         </div>
         <div class="centerClass">
@@ -77,7 +76,6 @@
       width="100">
       <template slot-scope="scope">
         <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-        <el-button type="text" size="small">编辑</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -178,12 +176,6 @@ body > .el-container {
 
 <script>
   export default {
-    methods: {
-      handleClick(row) {
-        console.log(row);
-      }
-    },
-
     data() {
       return {
         tableData: [{
@@ -196,38 +188,15 @@ body > .el-container {
           etime: '2019-07-18', 
           totalmoney: '6700.00',
           orderstate: '审核中'
-        }, {
-          orderid: 323,
-          name: '李小萌',
-          roomnumber: '177',
-          way: '长租',
-          totalday:'47天',
-          stime:'2019-05-04',
-          etime: '2019-06-18', 
-          totalmoney: '4400.40',
-          orderstate: '审核中'
-        }, {
-          orderid: 431,
-          name: '郝文婷',
-          roomnumber: '827',
-          way: '短租',
-          totalday:'7天',
-          stime:'2019-07-04',
-          etime: '2019-07-18', 
-          totalmoney: '700.00',
-          orderstate: '审核通过'
-        }, {
-          orderid: 111,
-          name: '王小虎',
-          roomnumber: '787',
-          way: '长租',
-          totalday:'67天',
-          stime:'2019-05-04',
-          etime: '2019-07-18', 
-          totalmoney: '6700.00',
-          orderstate: '审核中'
-        }]
+        }
+        ]
       }
+    },
+    methods: {
+      handleClick(row) {
+        console.log(row);
+      },
+      
     }
   }
 </script>

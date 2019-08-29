@@ -45,9 +45,9 @@
           </el-select>
         </el-form-item>
 
-<el-form-item label="房间价格">
-          <el-input 
-            type="price"
+        <el-form-item label="房间价格">
+          <el-input
+            type="number"
             v-model="form.price"
           ></el-input>
         </el-form-item>
@@ -89,7 +89,7 @@
   line-height: 60px;
   font-size: 26px;
   font-weight: 500;
-  font-family:fantasy
+  font-family: fantasy;
 }
 
 .el-aside {
@@ -128,7 +128,7 @@ export default {
   data () {
     return {
       form: {
-        dialogImageUrl: '',
+        fileList: [{ dialogImageUrl: '' }],
         dialogVisible: false,
         name: '',
         region: '',
@@ -148,7 +148,16 @@ export default {
       this.dialogVisible = true;
     },
     onSubmit () {
-      console.log('submit!');
+      this.apiPost();
+    },
+    apiPost () {
+      this.$http
+        .post('http://114.116.9.214:8000/room/insert', {          "name": this.form.name, "type": this.form.region, "price": this.form.price,
+          "address": this.form.address, "description": this.form.desc        });//差一个图片传输
+      this.$message({
+        message: '添加成功！',
+        type: 'success'
+      });
     }
   }
 }
