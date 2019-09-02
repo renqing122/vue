@@ -7,21 +7,30 @@
         :model="form"
         label-width=50%
       >
-        <el-upload
-          action="https://jsonplaceholder.typicode.com/posts/"
-          list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove"
-        >
-          <i class="el-icon-plus"></i>
-        </el-upload>
-        <el-dialog :visible.sync="dialogVisible">
-          <img
-            width="100%"
-            :src="dialogImageUrl"
-            alt=""
+        <el-form-item label="图片">
+          <el-upload
+            ref="upload"
+            action="/api/v1/file/uploadImage"
+            name="picture"
+            list-type="picture-card"
+            :limit="1"
+            :file-list="fileList"
+            :on-exceed="onExceed"
+            :before-upload="beforeUpload"
+            :on-preview="handlePreview"
+            :on-success="handleSuccess"
+            :on-remove="handleRemove"
           >
-        </el-dialog>
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img
+              width="100%"
+              :src="dialogImageUrl"
+              alt=""
+            >
+          </el-dialog>
+        </el-form-item>
         <el-form-item label="房间号">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
@@ -45,9 +54,9 @@
           </el-select>
         </el-form-item>
 
-<el-form-item label="房间价格">
-          <el-input 
-            type="price"
+        <el-form-item label="房间价格">
+          <el-input
+            type="number"
             v-model="form.price"
           ></el-input>
         </el-form-item>
@@ -71,28 +80,36 @@
             type="primary"
             @click="onSubmit"
           >立即创建</el-button>
-          <el-button>取消</el-button>
+          <el-button @click="cancel">取消</el-button>
         </el-form-item>
       </el-form>
 
     </el-main>
-    <el-footer>Footer</el-footer>
+    <el-footer></el-footer>
   </el-container>
 </template>
 
 <style>
 .el-header,
 .el-footer {
-  background-image: url("../../assets/logo.png");
+  /* background-image: url("../../assets/add.png"); */
   color: #333;
   text-align: center;
   line-height: 60px;
   font-size: 26px;
   font-weight: 500;
-  font-family:fantasy
+  font-family: fantasy;
 }
+
+.el-aside {
+  background-color: aliceblue;
+  color: #333;
+  text-align: center;
+  line-height: 200px;
+}
+
 .el-main {
-  background-image: url("../../assets/background.png");
+  background-color: aliceblue;
   color: #333;
   text-align: center;
   line-height: 160px;
@@ -117,30 +134,91 @@ body > .el-container {
 
 <script>
 export default {
+  props: {
+    "operatorId": String
+  },
   data () {
     return {
       form: {
-        dialogImageUrl: '',
+        fileList: [{ dialogImageUrl: '' }],
         dialogVisible: false,
         name: '',
         region: '',
         price: '',
         address: '',
         desc: '',
-
-      }
+      },
+      dialogImageUrl: '',
+      dialogVisible: false,
+      //图片列表（用于在上传组件中回显图片）
+      fileList: [{ name: '', url: '' }],
+      editor: '',
+      image: ''
     };
   },
   methods: {
-    handleRemove (file, fileList) {
-      console.log(file, fileList);
+    //文件上传成功的钩子函数
+    handleSuccess (res, file) {
+      this.$message({
+        type: 'info',
+        message: '图片上传成功',
+        duration: 6000
+      });
+      if (file.response.success) {
+        this.image = file.response.message; //将返回的文件储存路径赋值picture字段
+      }
     },
-    handlePictureCardPreview (file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
+    //删除文件之前的钩子函数
+    handleRemove (file, fileList) {
+      this.$message({
+        type: 'info',
+        message: '已删除原有图片',
+        duration: 6000
+      });
+    },
+    //点击列表中已上传的文件事的钩子函数
+    handlePreview (file) {
+    },
+    //上传的文件个数超出设定时触发的函数
+    onExceed (files, fileList) {
+      this.$message({
+        type: 'info',
+        message: '最多只能上传一个图片',
+        duration: 6000
+      });
+    },
+    //文件上传前的前的钩子函数
+    //参数是上传的文件，若返回false，或返回Primary且被reject，则停止上传
+    beforeUpload (file) {
+      const isJPG = file.type === 'image/jpeg';
+      const isGIF = file.type === 'image/gif';
+      const isPNG = file.type === 'image/png';
+      const isBMP = file.type === 'image/bmp';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG && !isGIF && !isPNG && !isBMP) {
+        this.$message.error('上传图片必须是JPG/GIF/PNG/BMP 格式!');
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!');
+      }
+      return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
     },
     onSubmit () {
-      console.log('submit!');
+      this.apiPost();
+    },
+    cancel () {
+      this.$router.push(`/managehouse/${this.operatorId}`)
+    },
+    apiPost () {
+      this.$http
+        .post('/api/v1/room/insert', {          "name": this.form.name, "type": this.form.region, "price": this.form.price,
+          "address": this.form.address, "description": this.form.desc, "picture": this.image        });//差一个图片传输
+      this.$message({
+        message: '添加成功！',
+        type: 'success'
+      });
+      this.$router.push(`/managehouse/${this.operatorId}`)
     }
   }
 }

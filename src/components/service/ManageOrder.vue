@@ -5,8 +5,9 @@
     v-loading="loading"
     element-loading-text="拼命加载中"
   >
-    <el-header>订单管理</el-header>
-    <el-header1>
+    <el-header>订单管理<el-button @click="back">返回</el-button>
+    </el-header>
+    <el-form class="head1">
       <el-input
         placeholder="请输入内容"
         v-model="input"
@@ -20,12 +21,16 @@
               style="width: 90px"
             >
               <el-option
-                label="房间ID"
+                label="订单ID"
                 value="1"
               ></el-option>
               <el-option
                 label="用户ID"
                 value="2"
+              ></el-option>
+              <el-option
+                label="全部"
+                value="3"
               ></el-option>
             </el-select>
           </div>
@@ -36,9 +41,10 @@
         <el-button
           slot="append"
           icon="el-icon-search"
+          @click="search"
         ></el-button>
       </el-input>
-    </el-header1>
+    </el-form>
     <div class="tableMain">
       <el-table
         :data="tableData"
@@ -46,70 +52,74 @@
       >
         <el-table-column
           fixed
-          prop="orderid"
+          prop="orderId"
           label="订单ID"
           width="150"
         >
         </el-table-column>
         <el-table-column
-          prop="name"
-          label="用户名"
+          prop="tenantId"
+          label="用户ID"
           width="100"
         >
         </el-table-column>
         <el-table-column
-          prop="roomnumber"
-          label="房间号"
+          prop="roomId"
+          label="房间ID"
           width="100"
         >
         </el-table-column>
         <el-table-column
-          prop="way"
+          prop="rentType"
           label="租赁方式"
           width="100"
         >
         </el-table-column>
         <el-table-column
-          prop="totalday"
-          label="租赁天数"
+          prop="rentTime"
+          label="租赁时间(长租/月、短租/天)"
           width="100"
         >
         </el-table-column>
         <el-table-column
-          prop="stime"
+          prop="startDate"
           label="开始时间"
-          width="150"
+          width="200"
         >
         </el-table-column>
         <el-table-column
-          prop="etime"
+          prop="endDate"
           label="结束时间"
-          width="150"
+          width="200"
         >
         </el-table-column>
         <el-table-column
-          prop="totalmoney"
-          label="总租金"
+          prop="rentMoney"
+          label="当前需交租金"
           width="100"
         >
         </el-table-column>
         <el-table-column
-          prop="orderstate"
+          prop="orderStatus"
           label="订单状态"
           width="100"
         >
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <span><el-button
-              size="small"
-              @click="handleEdit(scope.$index, scope.row)"
-            >修改订单</el-button></span>
-<span>            <el-button
-              size="small"
-              @click="open"
-            >生成合同
-            </el-button></span>
+            <span>
+              <el-button
+                size="small"
+                @click="handleEdit(scope.$index, scope.row)"
+              >修改订单</el-button>
+            </span>
+            <span>
+              <el-button
+                size="small"
+                @click="open(scope.$index, scope.row)"
+              >生成合同
+              </el-button>
+            </span>
           </template>
         </el-table-column>
       </el-table>
@@ -129,39 +139,19 @@
       title="修改订单状态"
       :visible.sync="dialogFormVisible"
     >
-      <el-form :model="form">
+      <el-form :model="revform">
         <el-form-item label="订单状态">
           <el-select
-            v-model="form.region"
+            v-model="revform.region"
             placeholder="请选择订单状态"
           >
             <el-option
-              label="未审核"
-              value=0
-            ></el-option>
-            <el-option
-              label="未通过审核"
-              value=1
-            ></el-option>
-            <el-option
-              label="审核通过"
-              value=2
-            ></el-option>
-            <el-option
               label="未支付"
-              value=3
-            ></el-option>
-            <el-option
-              label="逾期未支付"
-              value=4
+              value="未支付"
             ></el-option>
             <el-option
               label="进行中"
-              value=5
-            ></el-option>
-            <el-option
-              label="已结束"
-              value=6
+              value="进行中"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -187,7 +177,7 @@
   text-align: center;
   line-height: 60px;
 }
-.el-header1 {
+.head {
   background-color: #b3c0d1;
   color: #333;
   text-align: center;
@@ -209,89 +199,65 @@
 
 <script>
 export default {
+  props: {
+    "operatorId": String
+  },
   data () {
     return {
       loading: true,
-      tableData: [{
-        orderid: 111,
-        name: '王小虎',
-        roomnumber: '787',
-        way: '长租',
-        totalday: '67天',
-        stime: '2019-05-04',
-        etime: '2019-07-18',
-        totalmoney: '6700.00',
-        orderstate: '审核中'
-      }, {
-        orderid: 323,
-        name: '李小萌',
-        roomnumber: '177',
-        way: '长租',
-        totalday: '47天',
-        stime: '2019-05-04',
-        etime: '2019-06-18',
-        totalmoney: '4400.40',
-        orderstate: '审核中'
-      }, {
-        orderid: 431,
-        name: '郝文婷',
-        roomnumber: '827',
-        way: '短租',
-        totalday: '7天',
-        stime: '2019-07-04',
-        etime: '2019-07-18',
-        totalmoney: '700.00',
-        orderstate: '审核通过'
-      }, {
-        orderid: 111,
-        name: '王小虎',
-        roomnumber: '787',
-        way: '长租',
-        totalday: '67天',
-        stime: '2019-05-04',
-        etime: '2019-07-18',
-        totalmoney: '6700.00',
-        orderstate: '审核中'
-      }],
-
+      tableData: [],
+      // tableData: [{
+      //   orderid: 111,
+      //   name: '王小虎',
+      //   roomnumber: '787',
+      //   way: '长租',
+      //   totalday: '67天',
+      //   stime: '2019-05-04',
+      //   etime: '2019-07-18',
+      //   totalmoney: '6700.00',
+      //   orderstate: '审核中'
+      // }],
+      revform: {
+        region: ''
+      },
       dialogFormVisible: false,
       formLabelWidth: '80px',
       form: {},
       value6: '',
       currentPage3: 1,
       currentIndex: '',
+      select: '3',
+      input: ''
     }
   },
   created () {
     setTimeout(() => {
       this.loading = false
     }, 1500)
+    this.apiGet();
   },
   methods: {
-    showTime () {
-      this.$alert(this.value6, '起止时间', {
-        confirmButtonText: '确定',
-        callback: action => {
-          this.$message({
-            type: 'info',
-            message: '已显示'
-          })
-        }
-      })
-    },
-    add () {
-      this.form = {
-        date: '',
-        name: '',
-        region: '',
-        address: ''
-      }
-      this.dialogFormVisible = true
+    back () {
+      this.$router.push(`/smain/${this.operatorId}`)
     },
     update () {
-      this.form.date = reformat(this.form.date)
-      this.tableData.push(this.form)
       this.dialogFormVisible = false
+      this.$http
+        .post('/api/v1/operator/updateOrderStatusByOrderId', {          "orderId": this.form.orderId,
+          "orderStatus": this.revform.region        })
+        .then(() => {
+          this.$message({
+            type: 'success',
+            message: '修改成功!'
+          })
+          this.search();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '修改失败'
+          })
+        })
+        this.apiGet()
     },
     handleEdit (index, row) {
       this.form = this.tableData[index]
@@ -307,18 +273,39 @@ export default {
     handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
     },
-    open () {
-    this.$alert('这是一段内容', '用户长租合同', {
-      confirmButtonText: '确定',
-      callback: action => {
-        this.$message({
-          type: 'info',
-          message: `action: ${action}`
-        });
+    open (index, row) {
+      if (this.tableData[index].rentType == "长期")
+        this.$router.push(`/contract/${this.tableData[index].orderId}`)
+      else {
+        this.$message('短租不能生成合同')
       }
-    })
+    },
+    apiGet () {
+      this.$http
+        .get('/api/v1/rentOrder/queryAll').then(result => {
+          this.tableData = result.data
+        })
+    },
+    search () {
+      if (this.select === "1") {
+        this.$http
+          .post('/api/v1/operator/queryRentOrderListByOrderId', { "orderId": this.input })
+          .then(result => {
+            this.tableData = result.data
+          })
+      } else if (this.select === "2") {
+        this.$http
+          .post('/api/v1/rentOrder/tenantQueryRentOrderByTenantId', { "tenantId": this.input })
+          .then(result => {
+            this.tableData = result.data
+          })
+      } else {
+        this.$http
+          .get('/api/v1/rentOrder/queryAll').then(result => {
+            this.tableData = result.data
+          })
+      }
+    }
   }
-  }
-  
 }
 </script>

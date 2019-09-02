@@ -1,125 +1,186 @@
 <template>
- <div id="app">
-   <el-row>
-     <el-col :span="24">
-       <el-table size="mini" :data="master_user.data" border style="width: 100%" highlight-current-row>
-         <el-table-column type="index"></el-table-column>
-         <el-table-column v-for="(item,index) in master_user.columns" :key="index" :width="item.width">
-           <template slot-scope="scope">
-             <span v-if="scope.row.isSet">
-               <el-input size="mini" placeholder="请输入内容" v-model="master_user.sel[item.prop]">
-               </el-input>
-             </span>
-             <span v-else>{{scope.row[item.prop]}}</span>
-           </template>
-         </el-table-column>
-         <el-table-column label="操作" width="">
-           <template slot-scope="scope">
-             <span class="el-tag el-tag--success el-tag--mini" style="cursor: pointer;" @click.stop="saveRow(scope.row,scope.$index)">
-               确定
-             </span>
-             <span class="el-tag el-tag--primary el-tag--mini" style="cursor: pointer;" @click="editRow(scope.row,scope.$index)">
-               编辑
-             </span>
-             <span class="el-tag el-tag--danger el-tag--mini" style="cursor: pointer;" @click="deleteRow(scope.$index,master_user.data)">
-               删除
-             </span>
-           </template>
-         </el-table-column>
-       </el-table>
-     </el-col>
-     <el-col :span="24">
-       <div class="el-table-add-row" style="width: 99.2%;" @click="add()"><span>+ 添加</span></div>
-     </el-col>
-   </el-row>
-   <span>{{master_user.data}}</span>
- </div>
+
+  <div
+    class="basetable"
+    v-loading="loading"
+    element-loading-text="拼命加载中"
+  >
+    <el-header>客服审核</el-header>
+    <div class="tableMain">
+      <el-table
+        :data="tableData"
+        style="width: 100%"
+      >
+        <el-table-column
+          fixed
+          prop="email"
+          label="邮箱"
+          width="300"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="operatorName"
+          label="用户名"
+          width="120"
+        ></el-table-column>
+
+        <el-table-column
+          prop="sex"
+          label="性别"
+          width="120"
+        ></el-table-column>
+        <el-table-column
+          prop="age"
+          label="年龄"
+          width="120"
+        ></el-table-column>
+        <el-table-column
+          prop="telephone"
+          label="手机号"
+          width="300"
+        ></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <span>
+              <el-button
+                size="small"
+                @click="handleAdd(scope.$index, scope.row)"
+                type="success"
+              >通过</el-button>
+            </span>
+            <span>
+              <el-button
+                size="small"
+                type="danger"
+                @click="handleDelete(scope.$index, scope.row)"
+              >不通过
+              </el-button>
+            </span>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="page">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentPage3"
+        :page-size="100"
+        layout="prev, pager, next, jumper"
+        :total="1000"
+      >
+      </el-pagination>
+    </div>
+
+  </div>
 </template>
+<style scoped>
+.el-header,
+.el-footer {
+  background-image: url("../../assets/logo.png");
+  color: #333;
+  text-align: center;
+  line-height: 60px;
+}
+.el-header1 {
+  background-color: #b3c0d1;
+  color: #333;
+  text-align: center;
+  line-height: 60px;
+}
+
+.text {
+  font-size: 14px;
+}
+
+.item {
+  padding: 18px 0;
+}
+
+.box-card {
+  width: 480px;
+}
+</style>
 
 <script>
- export default {
-   name: '',
-   data() {
-     return {
-       master_user: {
-         sel: null, //选中行   
-         columns: [{
-             prop: "type",
-             label: "远程类型",
-             width: 120
-           },
-           {
-             prop: "addport",
-             label: "连接地址",
-             width: 150
-           },
-           {
-             prop: "user",
-             label: "登录用户",
-             width: 120
-           },
-           {
-             prop: "pwd",
-             label: "登录密码",
-             width: 220
-           },
-           {
-             prop: "info",
-             label: "其他信息"
-           }
-         ],
-         data: [],
-       },
-     }
-   },
-   methods: {
-     add() {
-       for (let i of this.master_user.data) {
-         if (i.isSet) return this.$message.warning("请先保存当前编辑项");
-       }
-       let j = {
-         "type": "",
-         "addport": "",
-         "user": "",
-         "pwd": "",
-         "info": "",
-         "isSet": true,
-       };
-       this.master_user.data.push(j);
-       this.master_user.sel = JSON.parse(JSON.stringify(j));
-     },
-     saveRow(row, index) { //保存
-       let data = JSON.parse(JSON.stringify(this.master_user.sel));
-       for (let k in data) {
-         row[k] = data[k] //将sel里面的value赋值给这一行。ps(for....in..)的妙用，细心的同学发现这里我并没有循环对象row
-       }
-       row.isSet = false;
-     },
-     editRow(row) { //编辑
-       for (let i of this.master_user.data) {
-         if (i.isSet) return this.$message.warning("请先保存当前编辑11项");
-       }
-       this.master_user.sel = row
-       row.isSet = true
-     },
-     deleteRow(index, rows) { //删除
-       rows.splice(index, 1)
-     }
-   },
-   components: {}
- }
-</script>
 
-<style>
- .el-table-add-row {
-   margin-top: 10px;
-   width: 100%;
-   height: 34px;
-   border: 1px dashed #c1c1cd;
-   border-radius: 3px;
-   cursor: pointer;
-   justify-content: center;
-   display: flex;
-   line-height: 34px;
- }
-</style>
+export default {
+  props: {
+    "rootname": String
+  },
+  data () {
+    return {
+      loading: true,
+      tableData: [],
+      // tableData: [{
+      //   email: this.rootname,
+      //   name: '大鹏',
+      //   sex: '男',
+      //   age: '23',
+      //   phonenumber: '18817762763',
+      // }],
+    }
+  },
+  created () {
+    setTimeout(() => {
+      this.loading = false
+    }, 1500),
+      this.apiGet();
+  },
+  methods: {
+    load (index, row) {
+
+    },
+
+    handleDelete (index, row) {
+      this.$confirm('是否驳回该客服申请?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('/api/v1/systemMaster/updateOperatorActivationStatus', {          "email": this.tableData[index].email,
+          "isActivation": "2"        })
+        this.tableData.splice(index, 1)
+        this.$message({
+          type: 'info',
+          message: '申请已驳回!'
+        })
+      }).catch(() => {
+      })
+    },
+
+    handleAdd (index, row) {
+      this.$confirm('是否添加该客服?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('/api/v1/systemMaster/updateOperatorActivationStatus', {          "email": this.tableData[index].email,
+          "isActivation": "1"        })
+        this.tableData.splice(index, 1)
+        this.$message({
+          type: 'success',
+          message: '成功添加客服!'
+        })
+      }).catch(() => {
+      })
+    },
+    cancel () {
+      this.dialogFormVisible = false
+    },
+    handleSizeChange (val) {
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange (val) {
+      console.log(`当前页: ${val}`)
+    },
+    apiGet () {
+      this.$http
+        .get('/api/v1/systemMaster/queryAllOperatorByActivationStatus0').then(result => {
+          this.tableData = result.data
+        })
+    }
+  }
+
+}
+</script>
